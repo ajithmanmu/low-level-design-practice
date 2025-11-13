@@ -1,21 +1,23 @@
-enum SpotType {
+import { Vehicle } from './Vehicle';
+
+export enum SpotType {
     MOTORCYCLE = "MOTORCYCLE",
     COMPACT = "COMPACT",
     LARGE = "LARGE",
 }
 
-class ParkingSpot {
+export class ParkingSpot {
     spotType: SpotType;
     spotNumber: number;
     currentVehicle: Vehicle | null;
 
-    constructor(spotType, spotNumber) {
+    constructor(spotType: SpotType, spotNumber: number) {
         this.spotType = spotType;
         this.spotNumber = spotNumber;
         this.currentVehicle = null;
     }
 
-    park(vehicle) {
+    park(vehicle: Vehicle) {
         this.currentVehicle = vehicle;
     }
 
@@ -27,7 +29,7 @@ class ParkingSpot {
         return !this.currentVehicle;
     }
 
-    private getAllowedVehiclesList(spotType) {
+    private getAllowedVehiclesList(spotType: SpotType) {
         const mapping = {
             MOTORCYCLE: ["MOTORCYCLE"],
             COMPACT: ["MOTORCYCLE", "CAR"],
@@ -36,7 +38,7 @@ class ParkingSpot {
         return mapping[spotType];
     }
 
-    canFitVehicle(vehicle):boolean {
+    canFitVehicle(vehicle: Vehicle):boolean {
         const allowedVehicles = this.getAllowedVehiclesList(this.spotType);
         const allowed = allowedVehicles.find((vehicleType)=>vehicleType === vehicle.vehicleType)
         return !!allowed;
