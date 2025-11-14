@@ -23,7 +23,12 @@ export class ParkingLevel {
                 const isAvailable = spot.isAvailable();
                 return spot.spotType === spotType && isAvailable ;
             });
-            return spot;
+
+            // Only return if we found a spot
+            if (spot) {
+                return spot;
+            }
+            // Otherwise, continue to next spot type in priority list
         }
         return undefined;
     }
