@@ -61,8 +61,90 @@ The idea here is we should try to find the most suited spot type for a vehicle b
 npx ts-node test.ts
 ```
 
+  ## Alternative Implementation: ByteByteGo Approach
 
-Other Notes
+  **Source:** https://bytebytego.com/courses/object-oriented-design-interview/design-a-parking-lot
 
-Tiered pricing. - increased pricing after x hours. can have different fee calculation strategy. ParkingTicket class level -  Can be done in calculateFee logic. 
-Billing - Supports multiple payment modes. ParkingTicket can have a Paymenmt Object assosciated.
+  ![Parking Lot Class Diagram](parking-lot.jpg)
+
+  ### Key Patterns Introduced
+
+  #### 1. Facade Pattern
+  The `ParkingLot` class acts as a facade, orchestrating interactions between `ParkingManager` and `FareCalculator` classes.
+
+  **ParkingLot Class (Facade)**
+  - `enterVehicle(vehicle)`: Finds parking spot using ParkingManager. Creates Ticket.
+  - `leaveVehicle(ticket)`: Uses unparking function from ParkingManager. Then calls FareCalculator.calculateFare()
+
+  #### 2. Strategy Pattern
+  Implemented for flexible fare calculation using different pricing strategies.
+
+  **FareStrategy (Interface)**
+  - `calculateFare()`
+
+  **BaseFareStrategy Class** (implements FareStrategy)
+  - `calculateFare(ticket, fare)`: Get the Vehicle Type and duration from ticket and return the fare
+
+  **PeakFareStrategy Class** (implements FareStrategy)
+  - `calculateFare(ticket, fare)`: Check if parked during peak time from ticket and return the fare × multiplier
+
+  **FareCalculator Class** (Implements Strategy Pattern)
+  - Loop through the Array of FareStrategy and calculate the fare
+  calculateFare() {
+     Loop through ordered Fare Strategies:
+       fare = FareStrategy.calculateFare(ticket, fare)
+     Return fare}
+  Each FareStrategy is applied sequentially and by this way the final fare is built correctly.
+
+  ---
+
+  ### Class Design Differences
+
+  #### Interface-Based Design
+
+  **Vehicle Interface**
+  - Classes: Motorcycle, Car, Truck, etc.
+
+  **ParkingSpot Interface**
+  - Classes: Small, Medium, Large, etc.
+
+  #### ParkingManager Class
+
+  **Data Structures:**
+  - `AvailableSpots HashMap`: `<spotType, [List of Spots]>`
+  - `VehicleToSpot HashMap`: `<Vehicle, Spot>`
+
+  **Parking function:**
+  1. When parking, get the smallest eligible spot that is available from the AvailableSpots map
+  2. Assign the vehicle to the spot. Remove the spot from AvailableSpots map
+  3. Add the vehicle to the VehicleToSpot map
+
+  **Unparking function:**
+  1. Do the opposite - remove from VehicleToSpot map and add back to AvailableSpots map
+
+  ---
+
+  ### Key Takeaways
+
+  **What's Different from My Implementation:**
+  - Uses HashMaps for O(1) spot lookup instead of arrays
+  - Separates parking management logic into dedicated ParkingManager class
+  - Uses Strategy Pattern for extensible fare calculation
+  - Uses Facade Pattern to hide complexity behind ParkingLot class
+  - Interface-based design for Vehicle and ParkingSpot (better extensibility)
+
+  **When to Use This Approach:**
+  - When fare calculation is complex (tiered pricing, peak hours, etc.)
+  - When you need O(1) lookup for large parking lots
+  - When you expect many vehicle/spot type variations
+  - When the system needs to be highly extensible
+
+  ---
+
+  ### Follow-up Questions Handled
+
+  **Q: How to add a new Handicapped Parking Spot?**
+  - Setup a new class and implement the ParkingSpot interface
+
+  **Q: How to find which vehicle is parked in a spot?**
+  - Setup a `SpotToVehicle` HashMap for O(1) lookup

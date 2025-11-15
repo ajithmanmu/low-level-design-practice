@@ -170,5 +170,3 @@ Parking Lot System - Requirements
   - Optimize later (if needed)
   - No AI help - think through it yourself
 
-
-  Refer : https://bytebytego.com/courses/object-oriented-design-interview/design-a-parking-lot
