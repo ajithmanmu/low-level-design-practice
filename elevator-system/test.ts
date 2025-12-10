@@ -1,5 +1,6 @@
 import { Elevator } from "./Elevator";
 import { ElevatorSystem } from "./ElevatorSystem";
+import { Direction } from "./Direction";
 
 console.log("=== Elevator System Test ===\n");
 
@@ -12,22 +13,22 @@ function printStatus(system: any) {
 }
 
 // Test 1: Single elevator, single destination
-// console.log("Test 1: Single elevator moving to floor 5");
-// const elevator1 = new Elevator(1);
-// const system1 = new ElevatorSystem(10, [elevator1]);
+console.log("Test 1: Single elevator moving to floor 5");
+const elevator1 = new Elevator(1);
+const system1 = new ElevatorSystem(10, [elevator1]);
 
-// system1.requestElevator(5, "up");
-// console.log("  After request (before movement):");
-// printStatus(system1);
+system1.requestElevator(5, Direction.UP);
+console.log("  After request (before movement):");
+printStatus(system1);
 
-// // Simulate movement
-// for (let i = 0; i < 6; i++) {
-//   system1.step();
-// }
+// Simulate movement
+for (let i = 0; i < 6; i++) {
+  system1.step();
+}
 
-// console.log("  After 6 steps:");
-// printStatus(system1);
-// console.log(elevator1.currentFloor === 5 && !elevator1.isMoving ? "✅ PASS\n" : "❌ FAIL\n");
+console.log("  After 6 steps:");
+printStatus(system1);
+console.log(elevator1.currentFloor === 5 && !elevator1.isMoving ? "✅ PASS\n" : "❌ FAIL\n");
 
 // Test 2: Single elevator, multiple destinations
 console.log("Test 2: Elevator with multiple destinations (3, 7, 9)");
@@ -82,7 +83,7 @@ console.log("  Initial positions:");
 printStatus(system3);
 
 // Request elevator from floor 6 going up
-system3.requestElevator(6, "up");
+system3.requestElevator(6, Direction.UP);
 
 console.log("  After request from floor 6 (should assign closest idle elevator):");
 printStatus(system3);

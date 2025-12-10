@@ -1,4 +1,6 @@
-
+import { Direction } from "./Direction";
+import { ExternalRequest } from "./ExternalRequest";
+import { InternalRequest } from "./InternalRequest";
 export class ElevatorSystem {
     floors: number;
     elevatorMap: any;
@@ -16,13 +18,15 @@ export class ElevatorSystem {
     assignElevator() {
         const request = this.queue.shift();
         if (!request) return null;
-        let {floor, direction} = request;
+
+        const floor = request.getFloor();
+        const direction = request.getDirection();
         
         let selectedElevator;
         let minDist = Infinity;
         for(let [elevatorId, elevator] of this.elevatorMap) {
             if(elevator.isMoving && elevator.direction === direction) {
-                if(direction === "up") {
+                if(direction === Direction.UP) {
                     if(elevator.currentFloor < floor) {
                         let dist = Math.abs(floor-elevator.currentFloor);
                         if(dist < minDist) {
@@ -30,7 +34,7 @@ export class ElevatorSystem {
                             selectedElevator = elevator;
                         }
                     }
-                } else if(direction === "down") {
+                } else if(direction === Direction.DOWN) {
                     if(elevator.currentFloor > floor) {
                         let dist = Math.abs(floor-elevator.currentFloor);
                         if(dist < minDist) {
@@ -57,26 +61,26 @@ export class ElevatorSystem {
         return selectedElevator;
     }
 
-    requestElevator(floor: number, direction: string) {
-        this.queue.push({
-            floor,
-            direction
-        })
+    requestElevator(floor: number, direction: Direction) {
+        const externalRequest = new ExternalRequest(direction, floor)
+        this.queue.push(externalRequest);
         let elevator = this.assignElevator();
         elevator.setDestination(floor);
-        elevator.isMoving = true;
-        // return elevator;
+        // elevator.isMoving = true;
     }
 
     selectFloor(elevatorId: number, destinationFloor: number) {
+        
         let elevator = this.elevatorMap.get(elevatorId);
-        elevator.setDestination(destinationFloor);
-        elevator.isMoving = true;
+        const internalRequest = new InternalRequest(elevator, destinationFloor)
+        elevator.setDestination(internalRequest.getFloor());
+        // elevator.isMoving = true;
     }
 
     step() {
         for(let [elevatorId, elevator] of this.elevatorMap) {
-            if(elevator.isMoving) {
+            // Check if elevator has any destinations to go
+            if(elevator.destinationFloor.length > 0) {
                 let destinations = elevator.destinationFloor;
                 let currentFloor = elevator.currentFloor;
                 let nextDestination = destinations[0];
@@ -85,13 +89,14 @@ export class ElevatorSystem {
                 } else if(currentFloor < nextDestination)  {
                     elevator.moveUp();
                 }
-                
+
                 if(elevator.currentFloor === nextDestination) {
                     destinations.shift();
                 }
                 if(destinations.length === 0) {
-                    elevator.isMoving = false;
-                    elevator.direction = null;
+                    // elevator.isMoving = false;
+                    // elevator.direction = Direction.IDLE;
+                    elevator.stop();
                 }
             }
         }
