@@ -9,7 +9,7 @@ export class Token {
 
     constructor(slot: Slot) {
         this.code = crypto.randomUUID();
-        this.expiry = Date.now() + EXPIRATION_DAYS;
+        this.expiry = Date.now() + (EXPIRATION_DAYS * 24 * 60 * 60 * 1000);
         this.slot = slot;
     }
 

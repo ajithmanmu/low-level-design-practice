@@ -1,20 +1,20 @@
-import { Slot } from "./Slot";
+import { Slot, SlotSize } from "./Slot";
 import { Token } from "./Token";
 
-const fallbackSlots = {
+const fallbackSlots: Record<string, string[]> = {
     "SMALL" : ["MEDIUM", "LARGE"],
     "MEDIUM" : ["LARGE"],
 }
 export class Locker {
     slots: Slot[];
-    tokensMap: any;
+    tokensMap: Map<string, Token>;
 
-    constructor(slots) {
+    constructor(slots: Slot[]) {
         this.slots = slots;
         this.tokensMap = new Map();
     }
 
-    findAvailableSlot(item) {
+    findAvailableSlot(item: { size: SlotSize }) {
         // loop through slots and find available slot that matches size
         for(let slot of this.slots) {
             if(!slot.occupied && slot.size === item.size) {
@@ -24,21 +24,22 @@ export class Locker {
 
         // Check fallback sizes;
         let fallbacks = fallbackSlots[item.size];
-        for(let fallbackslot of fallbacks) {
-            for(let slot of this.slots) {
-                if(!slot.occupied && slot.size === fallbackslot) {
-                    return slot;
+        if(fallbacks) {
+            for(let fallbackslot of fallbacks) {
+                for(let slot of this.slots) {
+                    if(!slot.occupied && slot.size === fallbackslot) {
+                        return slot;
+                    }
                 }
             }
         }
-
         return null;
         
     }
 
-    depositPackage(item) {
+    depositPackage(item: { size: SlotSize }) {
         const slot = this.findAvailableSlot(item);
-        if(!slot) return 'No slot found';
+        if(!slot) throw new Error('No slot found');
 
         // Update slot 
         slot.setOccupied(true);
@@ -49,24 +50,33 @@ export class Locker {
         return {accessToken, slot};
     }
 
-    pickup(code) {
-        if(!code) return 'Invalid code';
+    pickup(code: string) {
+        if(!code) throw new Error('Invalid code');
         
         const token = this.tokensMap.get(code);
-        if(!token) return 'Invalid code';
+        if(!token) throw new Error('Invalid code');
 
         const slot = token.getSlotIfAvailable();
-        if(!slot) return 'Token expired'
+        if(!slot){
+            this.clearPackage(token);
+            throw new Error('Token expired');
+        } 
 
-        // update slot
-        slot.setOccupied(false);
-        // remove token
-        this.tokensMap.delete(code);
+        this.clearPackage(token);
 
         return slot;
     }
 
-    removeExpiredPackage(code) {
+    clearPackage(token: Token) {
+        if(!token) throw new Error('Invalid code');
+
+        const slot = token.getSlot();
+
+        // update slot
+        slot.setOccupied(false);
+        // remove token
+        this.tokensMap.delete(token.getCode());
 
     }
+
 }

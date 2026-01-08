@@ -9,14 +9,14 @@ export class Slot {
     occupied: boolean;
     size: SlotSize;
 
-    constructor(id, size:SlotSize) {
+    constructor(id: number, size: SlotSize) {
         this.id = id;
         this.occupied = false;
         this.size = size;
         // this.package = null;
     }
 
-    setOccupied(occupied) {
+    setOccupied(occupied: boolean) {
         this.occupied = occupied;
     }
 }
