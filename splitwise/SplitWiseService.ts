@@ -84,8 +84,8 @@ export class SplitWiseService {
        // update balance
        for(let split of splits) {
         if(split.user.id !== paidByUser.id) {
-            split.user.updateBalance(paidByUser.id, split.getAmount());
-            paidByUser.updateBalance(split.user.id, -split.getAmount());
+            split.user.updateBalance(paidByUser.id, -split.getAmount());
+            paidByUser.updateBalance(split.user.id, split.getAmount());
         }
        }
         // create expense
@@ -105,8 +105,8 @@ export class SplitWiseService {
 
         let fromUser = this.users.get(fromUserId);
         let toUser = this.users.get(toUserId);
-        fromUser.updateBalance(toUser.id, -amount);
-        toUser.updateBalance(fromUser.id, amount);
+        fromUser.updateBalance(toUser.id, amount);
+        toUser.updateBalance(fromUser.id, -amount);
         const transaction = new Transaction(fromUser, toUser, amount);
         this.transactions.set(transaction.id, transaction);
     }

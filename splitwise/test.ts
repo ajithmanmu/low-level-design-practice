@@ -61,9 +61,9 @@ service4.addExpense(groups4[0].id, alice4.id, 100, "Dinner", SplitType.EQUAL, nu
 
 const aliceBalance4 = alice4.getBalance(bob4.id);
 const bobBalance4 = bob4.getBalance(alice4.id);
-console.log(`  Alice's balance with Bob: ${aliceBalance4} (expects -50, Bob owes Alice)`);
-console.log(`  Bob's balance with Alice: ${bobBalance4} (expects 50, Bob owes Alice)`);
-const pass4 = aliceBalance4 === -50 && bobBalance4 === 50;
+console.log(`  Alice's balance with Bob: ${aliceBalance4} (expects 50, Bob owes Alice)`);
+console.log(`  Bob's balance with Alice: ${bobBalance4} (expects -50, Bob owes Alice)`);
+const pass4 = aliceBalance4 === 50 && bobBalance4 === -50;
 console.log(pass4 ? "✅ PASS\n" : "❌ FAIL\n");
 
 // Test 5: Equal split - 3 people, $90 expense
@@ -82,14 +82,14 @@ service5.addMemberToGroup(charlie5.id, groups5[0].id);
 
 service5.addExpense(groups5[0].id, alice5.id, 90, "Lunch", SplitType.EQUAL, null);
 
-console.log(`  Alice's balance with Bob: ${alice5.getBalance(bob5.id)} (expects -30)`);
-console.log(`  Alice's balance with Charlie: ${alice5.getBalance(charlie5.id)} (expects -30)`);
-console.log(`  Bob's balance with Alice: ${bob5.getBalance(alice5.id)} (expects 30)`);
-console.log(`  Charlie's balance with Alice: ${charlie5.getBalance(alice5.id)} (expects 30)`);
-const pass5 = alice5.getBalance(bob5.id) === -30 &&
-              alice5.getBalance(charlie5.id) === -30 &&
-              bob5.getBalance(alice5.id) === 30 &&
-              charlie5.getBalance(alice5.id) === 30;
+console.log(`  Alice's balance with Bob: ${alice5.getBalance(bob5.id)} (expects 30)`);
+console.log(`  Alice's balance with Charlie: ${alice5.getBalance(charlie5.id)} (expects 30)`);
+console.log(`  Bob's balance with Alice: ${bob5.getBalance(alice5.id)} (expects -30)`);
+console.log(`  Charlie's balance with Alice: ${charlie5.getBalance(alice5.id)} (expects -30)`);
+const pass5 = alice5.getBalance(bob5.id) === 30 &&
+              alice5.getBalance(charlie5.id) === 30 &&
+              bob5.getBalance(alice5.id) === -30 &&
+              charlie5.getBalance(alice5.id) === -30;
 console.log(pass5 ? "✅ PASS\n" : "❌ FAIL\n");
 
 // Test 6: Exact split
@@ -113,9 +113,9 @@ const splitDetails6 = [
 ];
 service6.addExpense(groups6[0].id, alice6.id, 100, "Groceries", SplitType.EXACT, splitDetails6);
 
-console.log(`  Bob's balance with Alice: ${bob6.getBalance(alice6.id)} (expects 60)`);
-console.log(`  Charlie's balance with Alice: ${charlie6.getBalance(alice6.id)} (expects 40)`);
-const pass6 = bob6.getBalance(alice6.id) === 60 && charlie6.getBalance(alice6.id) === 40;
+console.log(`  Bob's balance with Alice: ${bob6.getBalance(alice6.id)} (expects -60)`);
+console.log(`  Charlie's balance with Alice: ${charlie6.getBalance(alice6.id)} (expects -40)`);
+const pass6 = bob6.getBalance(alice6.id) === -60 && charlie6.getBalance(alice6.id) === -40;
 console.log(pass6 ? "✅ PASS\n" : "❌ FAIL\n");
 
 // Test 7: Percentage split
@@ -139,9 +139,9 @@ const splitDetails7 = [
 ];
 service7.addExpense(groups7[0].id, alice7.id, 200, "Hotel", SplitType.PERCENT, splitDetails7);
 
-console.log(`  Bob's balance with Alice: ${bob7.getBalance(alice7.id)} (expects 100 = 50% of 200)`);
-console.log(`  Charlie's balance with Alice: ${charlie7.getBalance(alice7.id)} (expects 60 = 30% of 200)`);
-const pass7 = bob7.getBalance(alice7.id) === 100 && charlie7.getBalance(alice7.id) === 60;
+console.log(`  Bob's balance with Alice: ${bob7.getBalance(alice7.id)} (expects -100 = 50% of 200)`);
+console.log(`  Charlie's balance with Alice: ${charlie7.getBalance(alice7.id)} (expects -60 = 30% of 200)`);
+const pass7 = bob7.getBalance(alice7.id) === -100 && charlie7.getBalance(alice7.id) === -60;
 console.log(pass7 ? "✅ PASS\n" : "❌ FAIL\n");
 
 // Test 8: Settle up - partial payment
@@ -160,9 +160,9 @@ service8.addExpense(groups8[0].id, alice8.id, 100, "Coffee", SplitType.EQUAL, nu
 console.log(`  Before settle: Bob owes Alice ${bob8.getBalance(alice8.id)}`);
 
 service8.settleUp(bob8.id, alice8.id, 30);
-console.log(`  After $30 payment: Bob owes Alice ${bob8.getBalance(alice8.id)} (expects 20)`);
-console.log(`  Alice's balance with Bob: ${alice8.getBalance(bob8.id)} (expects -20)`);
-const pass8 = bob8.getBalance(alice8.id) === 20 && alice8.getBalance(bob8.id) === -20;
+console.log(`  After $30 payment: Bob owes Alice ${bob8.getBalance(alice8.id)} (expects -20)`);
+console.log(`  Alice's balance with Bob: ${alice8.getBalance(bob8.id)} (expects 20)`);
+const pass8 = bob8.getBalance(alice8.id) === -20 && alice8.getBalance(bob8.id) === 20;
 console.log(pass8 ? "✅ PASS\n" : "❌ FAIL\n");
 
 // Test 9: Settle up - full payment
@@ -200,18 +200,18 @@ console.log(`  After Alice pays $60: Bob owes Alice ${bob11.getBalance(alice11.i
 
 // Bob pays $30 (each owes $15, so Alice owes Bob $15)
 service11.addExpense(groups11[0].id, bob11.id, 30, "Expense 2", SplitType.EQUAL, null);
-console.log(`  After Bob pays $30: Bob owes Alice ${bob11.getBalance(alice11.id)} (expects 15)`);
-console.log(`  Alice owes Bob: ${alice11.getBalance(bob11.id)} (expects -15)`);
+console.log(`  After Bob pays $30: Bob owes Alice ${bob11.getBalance(alice11.id)} (expects -15)`);
+console.log(`  Alice owes Bob: ${alice11.getBalance(bob11.id)} (expects 15)`);
 
 // Net: Bob owed Alice $30, then Alice owed Bob $15 → Bob owes Alice $15
-const pass11 = bob11.getBalance(alice11.id) === 15 && alice11.getBalance(bob11.id) === -15;
+const pass11 = bob11.getBalance(alice11.id) === -15 && alice11.getBalance(bob11.id) === 15;
 console.log(pass11 ? "✅ PASS\n" : "❌ FAIL\n");
 
 // Test 12: getBalances returns all balances for a user
 console.log("Test 12: getBalances returns full balance map");
 const balances11 = service11.getBalances(bob11.id);
 console.log(`  Bob's balances: ${[...balances11.entries()].map(([k, v]) => `${v}`).join(", ")}`);
-const pass12 = balances11.size === 1 && balances11.get(alice11.id) === 15;
+const pass12 = balances11.size === 1 && balances11.get(alice11.id) === -15;
 console.log(pass12 ? "✅ PASS\n" : "❌ FAIL\n");
 
 // Test 13: Error - user not found
